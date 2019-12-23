@@ -2,36 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a104b976-e884-47da-acdc-7d711593b0f6" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/react-demo/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/.browserslistrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/.eslintrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/.prettierrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/build/webpack.base.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/build/webpack.dev.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/build/webpack.dll.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/build/webpack.prod.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/dll/jquery-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/dll/jquery.dll.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/postcss.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/assets/home.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/components/virtList/VirtList.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/components/virtList/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/components/virtList/item.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/components/virtList/virtList.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/math.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/pages/Count.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/pages/Home.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/pages/List.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/pages/VirtListTest.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/router/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/src/template.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-demo/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/virt-list.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-demo/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -45,10 +22,19 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/react-demo/.gitignore">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="280">
-              <caret line="14" column="5" lean-forward="true" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+              <caret line="14" column="5" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/react-demo/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="16" column="37" lean-forward="true" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -93,11 +79,6 @@
               <item name="virt-list" type="b2602c69:ProjectViewProjectNode" />
               <item name="virt-list" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="virt-list" type="b2602c69:ProjectViewProjectNode" />
-              <item name="virt-list" type="462c0819:PsiDirectoryNode" />
-              <item name="react-demo" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -106,6 +87,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editor.config.ad.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -134,23 +116,22 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1577095167322</updated>
-      <workItem from="1577095170169" duration="269000" />
+      <workItem from="1577095170169" duration="503000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="269000" />
+    <option name="totallyTimeSpent" value="503000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15715292" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15715292" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.3299363" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.3299363" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -168,10 +149,17 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/react-demo/.gitignore">
+    <entry file="file://$PROJECT_DIR$/react-demo/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="16" column="37" lean-forward="true" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
-          <caret line="14" column="5" lean-forward="true" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+          <caret line="14" column="5" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="5" />
         </state>
       </provider>
     </entry>
