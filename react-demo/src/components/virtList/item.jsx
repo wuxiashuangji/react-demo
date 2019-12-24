@@ -9,7 +9,7 @@ export default class Item extends Component {
 
   componentDidMount() {
     /* eslint-disable-next-line */
-    this.props.cacheItem(this.node, this.props.index)
+    this.props.cacheItem(this.node, this.props.item)
   }
 
   render() {

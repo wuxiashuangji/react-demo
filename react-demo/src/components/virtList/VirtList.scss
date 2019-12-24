@@ -2,31 +2,43 @@
   overflow: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+
+  .infinite-list-phantom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+  }
+
+  .infinite-list {
+    left: 0;
+    right: 0;
+    top: 0;
+    position: absolute;
+  }
+
+  .infinite-list-item {
+    padding: 5px;
+    color: #555;
+    box-sizing: border-box;
+    border-bottom: 1px solid #999;
+    /* height:200px; */
+  }
+  .list-item{
+    border: 1px dashed grey;
+    padding: 5px;
+  }
 }
 
-.infinite-list-phantom {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  z-index: -1;
+.infinite-loading{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  span{
+    display: inline-block;
+    color: #555;
+    padding: 5px 8px;
+  }
 }
 
-.infinite-list {
-  left: 0;
-  right: 0;
-  top: 0;
-  position: absolute;
-}
 
-.infinite-list-item {
-  padding: 5px;
-  color: #555;
-  box-sizing: border-box;
-  border-bottom: 1px solid #999;
-  /* height:200px; */
-}
-.list-item{
-  border: 1px dashed grey;
-  padding: 5px;
-}

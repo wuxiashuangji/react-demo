@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import Item from './item'
+import { throttle } from './throttle'
+import './VirtList.scss'
 
 class VirtualizedList extends Component {
   constructor(props) {
@@ -24,10 +26,8 @@ class VirtualizedList extends Component {
       positions: [] // 位置信息缓存
     }
 
-    this.listData = props.data || []
-
     //预估高度
-    this.estimatedItemSize = props.estimatedItemSize || 20
+    this.estimatedItemSize = props.estimatedItemSize || 120
 
     // 不可见item数量是可见区域item数量的多少倍
     this.bufferScale = props.bufferScale || 1.2
@@ -35,10 +35,11 @@ class VirtualizedList extends Component {
     this.itemsDom = []
 
   }
+
   // 初始化数据
   initPositions() {
     this.setState({
-      positions: this.listData.map((d, index) => ({
+      positions: this.props.data.map((d, index) => ({
           index,
           height: this.estimatedItemSize,
           top: index * this.estimatedItemSize,
@@ -49,7 +50,8 @@ class VirtualizedList extends Component {
   }
 
   // 缓存已经渲染的item
-  cacheItem(node, index) {
+  cacheItem(node, item) {
+    const { _index: index} = item;
     if (this.itemsDom[index] && this.itemsDom[index].height === node.getBoundingClientRect().height) {
       return false
     }
@@ -117,7 +119,7 @@ class VirtualizedList extends Component {
 
   //获取当前的偏移量
   setStartOffset() {
-    const { positions, start, aboveCount } = this.state
+    const { positions, start, end, aboveCount, belowCount } = this.state
     let startOffset
     if (start >= 1) {
       let size = positions[start].top - (positions[start - aboveCount] ? positions[start - aboveCount].top : 0)
@@ -130,19 +132,19 @@ class VirtualizedList extends Component {
 
   //滚动事件
   scrollEvent() {
-    const { visibleCount } = this.state
+    const { visibleCount, screenHeight } = this.state
     //当前滚动位置
     let scrollTop = this.refs.list.scrollTop
     //此时的开始索引
     const start = this.getStartIndex(scrollTop)
     //此时的结束索引
-    const end = start + visibleCount
+    const end = start + visibleCount > this.props.data.length ? this.props.data.length : (start + visibleCount)
 
     const bufferScaleCount = this.bufferScale * visibleCount
 
     const aboveCount = Math.ceil(Math.min(start, bufferScaleCount))
-    const belowCount = Math.ceil(Math.min(this.listData.length - (start + visibleCount), bufferScaleCount))
-
+    const belowCount = Math.ceil(Math.min(this.props.data.length - end, bufferScaleCount))
+    const totalHeight = this.state.positions[this.state.positions.length - 1].bottom
     this.setState({
       start,
       end,
@@ -151,28 +153,41 @@ class VirtualizedList extends Component {
     }, () => {
       //此时的偏移量
       this.setStartOffset()
+      if (screenHeight + scrollTop + (this.props.scrollDistance || 0) === totalHeight && belowCount === 0 && end === this.props.data.length) {
+        throttle(() => {
+          'function' === typeof this.props.infiniteScroll && this.props.infiniteScroll()
+        }, 2000)()
+      }
     })
+    // 对外抛出scroll事件
+    'function' === typeof this.props.scrollEvent && this.props.scrollEvent(scrollTop, start, end, aboveCount, belowCount, visibleCount)
   }
-
-  componentWillMount() {
-    this.initPositions()
-  }
-
-  componentDidMount() {
+  // 重置高度
+  resetHeight() {
     const wrapperHeight = this.refs.list.getBoundingClientRect().height
     const visibleCount = Math.ceil(wrapperHeight / this.estimatedItemSize)
     const bufferScaleCount = this.bufferScale * visibleCount
+    const { start, end } = this.state
+    this.initPositions()
     this.setState({
       screenHeight: wrapperHeight,
-      start: 0,
+      start: start,
       visibleCount,
-      end: 0 + visibleCount,
-      aboveCount: Math.ceil(Math.min(0, bufferScaleCount)),
-      belowCount: Math.ceil(Math.min(this.listData.length - (0 + visibleCount), bufferScaleCount))
+      end: end + visibleCount,
+      aboveCount: Math.ceil(Math.min(start, bufferScaleCount)),
+      belowCount: Math.ceil(Math.min(this.props.data.length - (end + visibleCount), bufferScaleCount))
     })
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    this.resetHeight()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.refs.list) return
+    if (this.props.data !== prevProps.data) {
+      this.resetHeight()
+    }
     if (!this.itemsDom.length) {
       return
     }
@@ -190,45 +205,58 @@ class VirtualizedList extends Component {
     const { start, end, aboveCount, belowCount } = this.state
     let startTMP = start - aboveCount
     let endTMP = end + belowCount
-
-    const visibleData = this.listData.map((item, index) => {
+    const visibleData = this.props.data.map((item, index) => {
       return {
         _index: index,
         item
       }
     }).slice(startTMP, endTMP)
+    // 提示 渲染data-area
+    const dataAreaRender = (index) => {
+      if (index < start) {
+        return 'header-hide-area'
+      } else if (index > end) {
+        return 'bottom-hide-area'
+      } else {
+        return 'scroll-inview-area'
+      }
+    }
 
     return (
-      <div
-        ref={'list'}
-        style={{ height: '100%' }}
-        className="infinite-list-container"
-        onScroll={(e) => this.scrollEvent(e)}
-      >
-        <div ref={'phantom'} className="infinite-list-phantom"></div>
-        <div ref={'content'} className="infinite-list">
-          {
-            visibleData.map((item) => {
-              return (
-                <Item
-                  data-isabove={item._index < start ? '头部分隐藏区' : ''}
-                  data-isvisible={item._index >= start && item._index <= end ? '可视区' : ''}
-                  data-isbelow={item._index > end ? '底部分隐藏区' : ''}
-                  className="infinite-list-item"
-                  cacheItem={this.cacheItem.bind(this)}
-                  index={item._index}
-                  key={item._index}
-                  item={item}
-                  id={item._index}
-                >
-                  {
-                    'function' === typeof this.props.itemRender && this.props.itemRender(item, item._index)
-                  }
-                </Item>
-              )
-            })
-          }
+      <div style={{height: '100%', display:'flex', flexDirection: 'column'}}>
+        <div
+          ref={'list'}
+          style={{ flex: 1 }}
+          className="infinite-list-container"
+          onScroll={(e) => this.scrollEvent(e)}
+        >
+          <div ref={'phantom'} className="infinite-list-phantom"></div>
+          <div ref={'content'} className="infinite-list">
+            {
+              visibleData.map((item) => {
+                return (
+                  <Item
+                    data-area={dataAreaRender(item._index)}
+                    className="infinite-list-item"
+                    cacheItem={this.cacheItem.bind(this)}
+                    index={item._index}
+                    key={item._index}
+                    item={item}
+                    id={item._index}
+                  >
+                    {
+                      'function' === typeof this.props.itemRender && this.props.itemRender(item, item._index)
+                    }
+                  </Item>
+                )
+              })
+            }
+          </div>
         </div>
+        {/* 加载处理*/}
+        {
+          this.props.loading && (this.props.loadingWrapper || <div className="infinite-loading"><span>加载中...</span></div>)
+        }
       </div>
     )
   }
