@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import faker from 'faker'
 import "./VirtList.scss"
 
 export default class Item extends Component {

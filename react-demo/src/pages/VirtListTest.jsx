@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Loading } from 'zarm'
 import VirtList from './../components/virtList'
 
-const data = new Array(10)
+const data = new Array(100)
   .fill(
     { name: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈' }
   )
@@ -29,6 +29,7 @@ export default class VirtualizedList extends Component {
   }
 
   render() {
+    const { data } = this.state
     return <div style={{ height: 500, border: '1px solid pink' }}>
       <VirtList
         data={[...this.state.data]}
@@ -38,17 +39,22 @@ export default class VirtualizedList extends Component {
           this.setState({
             loading: true
           })
+          setTimeout(() => {
+            this.setState({
+              loading: false,
+              data: [...data, { name: 'dsafadsf' }]
+            })
+          }, 5000)
         }}
-        scrollEvent={(scrollTop) => {
-          console.log(scrollTop, 'scrollTop')
+        scrollEvent={() => {
         }}
         loading={this.state.loading}
-        // loadingWrapper={
-        //   <Loading
-        //     visible={this.state.loading}
-        //     stayTime={3000}
-        //   />
-        // }
+        loadingComponent={
+          <Loading
+            visible={this.state.loading}
+            stayTime={3000}
+          />
+        }
         itemRender={(item, index) => (<div>
           <p>{`内容-${index}: `}</p>
           {

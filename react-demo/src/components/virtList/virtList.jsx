@@ -1,7 +1,18 @@
 import React, { Component } from 'react'
 import Item from './item'
-import { throttle } from './throttle'
 import './VirtList.scss'
+
+const throttle = (fn, interval = 300) => {
+  let canRun = true
+  return function() {
+    if (!canRun) return
+    canRun = false
+    fn.apply(this, arguments)
+    setTimeout(() => {
+      canRun = true
+    }, interval)
+  }
+}
 
 class VirtualizedList extends Component {
   constructor(props) {
@@ -30,7 +41,7 @@ class VirtualizedList extends Component {
     this.estimatedItemSize = props.estimatedItemSize || 120
 
     // 不可见item数量是可见区域item数量的多少倍
-    this.bufferScale = props.bufferScale || 1.2
+    this.bufferScale = props.bufferScale || 1
 
     this.itemsDom = []
 
@@ -38,12 +49,14 @@ class VirtualizedList extends Component {
 
   // 初始化数据
   initPositions() {
+    const { data } = this.props
+    const { estimatedItemSize } = this
     this.setState({
-      positions: this.props.data.map((d, index) => ({
+      positions: data.map((d, index) => ({
           index,
-          height: this.estimatedItemSize,
-          top: index * this.estimatedItemSize,
-          bottom: (index + 1) * this.estimatedItemSize
+          height: estimatedItemSize,
+          top: index * estimatedItemSize,
+          bottom: (index + 1) * estimatedItemSize
         })
       )
     })
@@ -51,7 +64,7 @@ class VirtualizedList extends Component {
 
   // 缓存已经渲染的item
   cacheItem(node, item) {
-    const { _index: index} = item;
+    const { _index: index } = item
     if (this.itemsDom[index] && this.itemsDom[index].height === node.getBoundingClientRect().height) {
       return false
     }
@@ -65,7 +78,7 @@ class VirtualizedList extends Component {
     //二分法查找
     return this.binarySearch(this.state.positions, scrollTop)
   }
-
+  // 根据scrollTop值来定位list中的所处位置
   binarySearch(list, value) {
     let start = 0
     let end = list.length - 1
@@ -132,19 +145,21 @@ class VirtualizedList extends Component {
 
   //滚动事件
   scrollEvent() {
-    const { visibleCount, screenHeight } = this.state
+    const { visibleCount, screenHeight, positions } = this.state
+    const { data, loading } = this.props
+    if (loading) return
     //当前滚动位置
     let scrollTop = this.refs.list.scrollTop
     //此时的开始索引
     const start = this.getStartIndex(scrollTop)
     //此时的结束索引
-    const end = start + visibleCount > this.props.data.length ? this.props.data.length : (start + visibleCount)
+    const end = start + visibleCount > data.length ? data.length : (start + visibleCount)
 
     const bufferScaleCount = this.bufferScale * visibleCount
 
     const aboveCount = Math.ceil(Math.min(start, bufferScaleCount))
-    const belowCount = Math.ceil(Math.min(this.props.data.length - end, bufferScaleCount))
-    const totalHeight = this.state.positions[this.state.positions.length - 1].bottom
+    const belowCount = Math.ceil(Math.min(data.length - end, bufferScaleCount))
+    const totalHeight = positions[positions.length - 1].bottom
     this.setState({
       start,
       end,
@@ -153,20 +168,22 @@ class VirtualizedList extends Component {
     }, () => {
       //此时的偏移量
       this.setStartOffset()
-      if (screenHeight + scrollTop + (this.props.scrollDistance || 0) === totalHeight && belowCount === 0 && end === this.props.data.length) {
+      if (screenHeight + scrollTop + (this.props.scrollDistance || 0) === totalHeight && belowCount === 0 && end === data.length) {
         throttle(() => {
           'function' === typeof this.props.infiniteScroll && this.props.infiniteScroll()
-        }, 2000)()
+        }, 5000)()
       }
     })
     // 对外抛出scroll事件
     'function' === typeof this.props.scrollEvent && this.props.scrollEvent(scrollTop, start, end, aboveCount, belowCount, visibleCount)
   }
+
   // 重置高度
   resetHeight() {
     const wrapperHeight = this.refs.list.getBoundingClientRect().height
     const visibleCount = Math.ceil(wrapperHeight / this.estimatedItemSize)
     const bufferScaleCount = this.bufferScale * visibleCount
+    const { data } = this.props
     const { start, end } = this.state
     this.initPositions()
     this.setState({
@@ -175,7 +192,7 @@ class VirtualizedList extends Component {
       visibleCount,
       end: end + visibleCount,
       aboveCount: Math.ceil(Math.min(start, bufferScaleCount)),
-      belowCount: Math.ceil(Math.min(this.props.data.length - (end + visibleCount), bufferScaleCount))
+      belowCount: Math.ceil(Math.min(data.length - (end + visibleCount), bufferScaleCount))
     })
   }
 
@@ -200,30 +217,33 @@ class VirtualizedList extends Component {
     this.setStartOffset()
   }
 
-
   render() {
     const { start, end, aboveCount, belowCount } = this.state
+    const { data } = this.props
     let startTMP = start - aboveCount
     let endTMP = end + belowCount
-    const visibleData = this.props.data.map((item, index) => {
+    const visibleData = data.map((item, index) => {
       return {
         _index: index,
         item
       }
     }).slice(startTMP, endTMP)
-    // 提示 渲染data-area
+    // 提示用 渲染data-area
     const dataAreaRender = (index) => {
       if (index < start) {
+        // 在可视区上隐藏, 为了防止向上滚动留白
         return 'header-hide-area'
       } else if (index > end) {
+        // 在可视区下隐藏, 为了防止向下滚动留白
         return 'bottom-hide-area'
       } else {
+        // 在可视区内
         return 'scroll-inview-area'
       }
     }
 
     return (
-      <div style={{height: '100%', display:'flex', flexDirection: 'column'}}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div
           ref={'list'}
           style={{ flex: 1 }}
@@ -251,12 +271,14 @@ class VirtualizedList extends Component {
                 )
               })
             }
+            {/* 加载处理 */}
+            {
+              this.props.loading && (this.props.loadingComponent ||
+                <div className="infinite-loading"><span>加载中...</span></div>)
+            }
           </div>
+
         </div>
-        {/* 加载处理*/}
-        {
-          this.props.loading && (this.props.loadingWrapper || <div className="infinite-loading"><span>加载中...</span></div>)
-        }
       </div>
     )
   }
