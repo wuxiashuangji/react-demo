@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import "./VirtList.scss"
+// import "./VirtList.scss"
 
 export default class Item extends Component {
   constructor(props) {

@@ -69,7 +69,6 @@ class VirtualizedList extends Component {
       return false
     }
     const { height, width } = node.getBoundingClientRect()
-
     this.itemsDom[index] = { height, id: index }
   }
 
@@ -78,6 +77,7 @@ class VirtualizedList extends Component {
     //二分法查找
     return this.binarySearch(this.state.positions, scrollTop)
   }
+
   // 根据scrollTop值来定位list中的所处位置
   binarySearch(list, value) {
     let start = 0
@@ -147,7 +147,6 @@ class VirtualizedList extends Component {
   scrollEvent() {
     const { visibleCount, screenHeight, positions } = this.state
     const { data, loading } = this.props
-    if (loading) return
     //当前滚动位置
     let scrollTop = this.refs.list.scrollTop
     //此时的开始索引
@@ -168,16 +167,15 @@ class VirtualizedList extends Component {
     }, () => {
       //此时的偏移量
       this.setStartOffset()
-      if (screenHeight + scrollTop + (this.props.scrollDistance || 0) === totalHeight && belowCount === 0 && end === data.length) {
+      if (!loading && screenHeight + scrollTop + (this.props.scrollDistance || 0) >= totalHeight && belowCount === 0 && end === data.length) {
         throttle(() => {
           'function' === typeof this.props.infiniteScroll && this.props.infiniteScroll()
-        }, 5000)()
+        }, 2000)()
       }
     })
     // 对外抛出scroll事件
     'function' === typeof this.props.scrollEvent && this.props.scrollEvent(scrollTop, start, end, aboveCount, belowCount, visibleCount)
   }
-
   // 重置高度
   resetHeight() {
     const wrapperHeight = this.refs.list.getBoundingClientRect().height
